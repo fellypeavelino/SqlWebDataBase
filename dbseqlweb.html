@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="utf-8" />
+<head>
+	<title></title>
+</head>
+<body>
+
+</body>
+	<script type="text/javascript">
+		if (!window.openDatabase){
+    		console.log("Este browser suporta NÃO Web SQL Databases");
+		}
+
+ 		var db = openDatabase(
+    		'meuBanco', 
+    		'1.0', 
+    		'My database',
+    		2 * 1024 * 1024
+ 		);
+
+ 		db.transaction( function (tx) {
+    		tx.executeSql(
+       			'CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
+       			[],
+       			function ()
+ 				{
+          			console.log("código para carga de dados\n");
+          			tx.executeSql('INSERT INTO contacts (name) VALUES ("jobs")');
+          			tx.executeSql('INSERT INTO contacts (name) VALUES ("Bill Gates")');
+       			}
+       		);
+ 		});
+
+ 		db.transaction( function (tx) {
+    		tx.executeSql(
+       			'SELECT * FROM contacts',
+       			[],
+      			function (tx, results)
+       			{
+          			var len = results.rows.length;
+          			alert(len);
+          			console.log('Existem ' + len + ' registros!\n');
+          			for (var i = 0; i < len; i++)
+          			{
+             			var row = results.rows.item(i);
+             			console.log(row.id + ': ' + row.name+'\n');
+          			}
+       			},
+       			function (tx, error)
+       			{
+          			alert('ooops ' + error.message);
+       			}
+       		);
+ 		});
+/*
+		db.transaction( function (tx) {
+    		tx.executeSql(
+       			'drop TABLE contacts'
+       		);
+ 		});
+*/
+	</script>
+</html>
